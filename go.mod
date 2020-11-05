@@ -1,1 +1,3 @@
-module "github.com/gonejack/hsize"
+module github.com/gonejack/hsize
+
+go 1.15
