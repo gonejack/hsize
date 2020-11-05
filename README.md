@@ -1,12 +1,12 @@
-# human readable size
+# hsize [![GitHub license](https://img.shields.io/github/license/gonejack/hsize.svg?color=blue)](LICENSE.md)
+command line tool for human readable size
 
-
-## installation
+## Installation
 ```
-go get github.com/gonejack/hsize
+go get -u github.com/gonejack/hsize
 ```
 
-## usage
+## Usage
 
 by arguments
 ```
