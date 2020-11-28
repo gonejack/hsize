@@ -27,10 +27,7 @@ Arguments:
   -p          Precision
 `
 
-func exitf(format string, a ...interface{}) {
-	fmt.Fprintln(os.Stderr, fmt.Sprintf(format, a...))
-	os.Exit(-2)
-}
+
 
 func main() {
 	args := os.Args[1:]
@@ -47,14 +44,15 @@ func main() {
 			if i+1 >= len(args) {
 				exitf("missing value for argument -p")
 			}
+
 			var err error
 			prec, err = strconv.Atoi(args[i+1])
-			if err == nil {
-				args = args[i+2:]
-				break
-			} else {
+			if prec < 0 || err != nil {
 				exitf("invalid value %s for argument -p", args[i+1])
 			}
+
+			args = args[i+2:]
+			break
 		}
 	}
 
@@ -71,6 +69,11 @@ func main() {
 			exitf("error reading stdin: %s", scanner.Err())
 		}
 	}
+}
+
+func exitf(format string, a ...interface{}) {
+	fmt.Fprintln(os.Stderr, fmt.Sprintf(format, a...))
+	os.Exit(-2)
 }
 
 var units = [...]string{"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"}
