@@ -12,31 +12,7 @@ type SizeNum struct {
 	decs []int8
 }
 
-func (n *SizeNum) Div1024() {
-	for i := 1; i <= 10; i++ {
-		n.Div2()
-	}
-}
-func (n *SizeNum) Div2() {
-	h := false
-	for i, v := range n.ints {
-		if h {
-			v += 10
-		}
-		if v > 0 {
-			n.ints[i], h = v>>1, v&1 != 0
-		}
-	}
-	for i, v := range n.decs {
-		if h {
-			v += 10
-		}
-		if v > 0 {
-			n.decs[i], h = v>>1, v&1 != 0
-		}
-	}
-}
-func (n *SizeNum) from(str string) (*SizeNum, error) {
+func (n *SizeNum) From(str string) (*SizeNum, error) {
 	if n.ints == nil {
 		n.ints = make([]int8, 0, len(str)+2)
 	} else {
@@ -58,25 +34,6 @@ func (n *SizeNum) from(str string) (*SizeNum, error) {
 	}
 
 	return n, nil
-}
-func (n *SizeNum) String() string {
-	rs := make([]rune, 0, len(n.ints)+prec+1)
-	ints, decs := n.integers(), n.decimals()
-
-	if len(ints) == 0 {
-		ints = append(ints, '0')
-	} else {
-		for _, v := range ints {
-			rs = append(rs, rune('0'+v))
-		}
-	}
-	if len(decs) > 0 {
-		rs = append(rs, '.')
-	}
-	for _, v := range decs {
-		rs = append(rs, rune('0'+v))
-	}
-	return string(rs)
 }
 
 func (n *SizeNum) Cmp(s *SizeNum) (result int) {
@@ -132,6 +89,50 @@ func (n *SizeNum) Gte(s *SizeNum) bool {
 }
 func (n *SizeNum) Eq(s *SizeNum) bool {
 	return n.Cmp(s) == 0
+}
+
+func (n *SizeNum) Div1024() {
+	for i := 1; i <= 10; i++ {
+		n.Div2()
+	}
+}
+func (n *SizeNum) Div2() {
+	h := false
+	for i, v := range n.ints {
+		if h {
+			v += 10
+		}
+		if v > 0 {
+			n.ints[i], h = v>>1, v&1 != 0
+		}
+	}
+	for i, v := range n.decs {
+		if h {
+			v += 10
+		}
+		if v > 0 {
+			n.decs[i], h = v>>1, v&1 != 0
+		}
+	}
+}
+func (n *SizeNum) String() string {
+	rs := make([]rune, 0, len(n.ints)+prec+1)
+	ints, decs := n.integers(), n.decimals()
+
+	if len(ints) == 0 {
+		ints = append(ints, '0')
+	} else {
+		for _, v := range ints {
+			rs = append(rs, rune('0'+v))
+		}
+	}
+	if len(decs) > 0 {
+		rs = append(rs, '.')
+	}
+	for _, v := range decs {
+		rs = append(rs, rune('0'+v))
+	}
+	return string(rs)
 }
 
 func (n *SizeNum) integers() (ints []int8) {

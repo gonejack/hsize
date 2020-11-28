@@ -76,8 +76,8 @@ func main() {
 var units = [...]string{"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"}
 
 func parse(raw string) {
-	scale, _ := new(SizeNum).from("1024")
-	size, err := new(SizeNum).from(strings.TrimSpace(raw))
+	scale, _ := new(SizeNum).From("1024")
+	size, err := new(SizeNum).From(strings.TrimSpace(raw))
 	if err != nil {
 		fmt.Printf("NaN(%s)\n", raw)
 		return
