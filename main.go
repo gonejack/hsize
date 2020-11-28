@@ -3,9 +3,9 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"math/big"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -21,17 +21,42 @@ command:
   echo 123 | {exec}
 print:
   123B
+
+Arguments:
+  -h, --help  Print this help
+  -p          Precision
 `
 
 func main() {
-	if len(os.Args) > 1 {
-		for _, arg := range os.Args[1:] {
-			if arg == "-h" || arg == "--help" {
-				fmt.Print(strings.ReplaceAll(help, "{exec}", filepath.Base(os.Args[0])))
+	args := os.Args[1:]
+
+	for _, arg := range args {
+		if arg == "-h" || arg == "--help" {
+			fmt.Print(strings.ReplaceAll(help, "{exec}", filepath.Base(os.Args[0])))
+			return
+		}
+	}
+
+	for i, arg := range args {
+		if arg == "-p" {
+			if i+1 >= len(args) {
+				fmt.Fprint(os.Stderr, "missing value for argument -p")
+				return
+			}
+			var err error
+			prec, err = strconv.Atoi(args[i+1])
+			if err == nil {
+				args = args[i+2:]
+				break
+			} else {
+				fmt.Fprintf(os.Stderr, "invalid value %s for argument -p", args[i+1])
 				return
 			}
 		}
-		for _, arg := range os.Args[1:] {
+	}
+
+	if len(args) > 0 {
+		for _, arg := range args {
 			parse(arg)
 		}
 	} else {
@@ -46,32 +71,23 @@ func main() {
 }
 
 var units = [...]string{"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"}
-var scale = big.NewInt(1024)
+var scale, _ = new(SizeNum).from("1024")
 
 func parse(raw string) {
-	size, ok := new(big.Int).SetString(strings.TrimSpace(raw), 10)
-	if !ok {
+	size, err := new(SizeNum).from(strings.TrimSpace(raw))
+	if err != nil {
 		fmt.Printf("NaN(%s)\n", raw)
 		return
 	}
 
-	var value, label string
-	var unit = big.NewInt(1)
-	var next = big.NewInt(0).Set(scale)
+	var label string
 	for _, label = range units {
-		if size.Cmp(next) >= 0 {
-			unit = unit.Mul(unit, scale)
-			next = next.Mul(next, scale)
+		if size.Gte(scale) {
+			size.Div1024()
 		} else {
 			break
 		}
 	}
 
-	rat := new(big.Rat).SetFrac(size, unit)
-	if rat.IsInt() {
-		value = rat.FloatString(0)
-	} else {
-		value = rat.FloatString(2)
-	}
-	fmt.Printf("%s%s\n", value, label)
+	fmt.Printf("%s%s\n", size, label)
 }
