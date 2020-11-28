@@ -11,10 +11,10 @@ import (
 
 const help = `Examples:
 command:
-  {exec} 123 45678 text
+  {exec} 123 383764 text
 print:
   123B
-  44.61KB
+  374.76KB
   NaN(text)
 
 command: 

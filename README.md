@@ -10,9 +10,9 @@ go get -u github.com/gonejack/hsize
 
 by arguments
 ```
-> hsize 123 45678
+> hsize 123 383764
 123B
-44.61KB
+374.76KB
 ```
 
 by stdin
