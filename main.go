@@ -23,8 +23,8 @@ print:
   123B
 
 Arguments:
-  -h, --help  Print this help
-  -p          Precision
+  -h,--help      Print this help
+  -p,--precision Precision
 `
 
 func main() {
@@ -38,7 +38,7 @@ func main() {
 	}
 
 	for i, arg := range args {
-		if arg == "-p" {
+		if arg == "-p" || arg == "--precision" {
 			if i+1 >= len(args) {
 				exitf("missing value for argument -p")
 			}
