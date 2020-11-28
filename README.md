@@ -1,4 +1,4 @@
-# hsize [![GitHub license](https://img.shields.io/github/license/gonejack/hsize.svg?color=blue)](LICENSE.md)
+# hsize [![GitHub license](https://img.shields.io/github/license/gonejack/hsize.svg?color=blue)](LICENSE)
 command line tool for human readable size
 
 ## Installation
