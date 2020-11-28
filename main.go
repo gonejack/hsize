@@ -13,13 +13,13 @@ const help = `Examples:
 command:
   {exec} 123 45678
 print:
-  123 => 123B
-  45678 => 44.61KB
+  123B
+  44.61KB
 
 command: 
   echo 123 | {exec}
 print:
-  123 => 123B
+  123B
 `
 
 func main() {
@@ -50,7 +50,7 @@ var scale = big.NewInt(1024)
 func parse(raw string) {
 	size, ok := new(big.Int).SetString(strings.TrimSpace(raw), 10)
 	if !ok {
-		fmt.Printf("can not parse \"%s\"\n", raw)
+		fmt.Printf("NaN(%s)\n", raw)
 		return
 	}
 
@@ -72,5 +72,5 @@ func parse(raw string) {
 	} else {
 		value = rat.FloatString(2)
 	}
-	fmt.Printf("%s => %s%s\n", raw, value, label)
+	fmt.Printf("%s%s\n", value, label)
 }
