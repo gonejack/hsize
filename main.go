@@ -27,6 +27,11 @@ Arguments:
   -p          Precision
 `
 
+func exitf(format string, a ...interface{}) {
+	fmt.Fprintln(os.Stderr, fmt.Sprintf(format, a...))
+	os.Exit(-2)
+}
+
 func main() {
 	args := os.Args[1:]
 
@@ -40,8 +45,7 @@ func main() {
 	for i, arg := range args {
 		if arg == "-p" {
 			if i+1 >= len(args) {
-				fmt.Fprint(os.Stderr, "missing value for argument -p")
-				return
+				exitf("missing value for argument -p")
 			}
 			var err error
 			prec, err = strconv.Atoi(args[i+1])
@@ -49,8 +53,7 @@ func main() {
 				args = args[i+2:]
 				break
 			} else {
-				fmt.Fprintf(os.Stderr, "invalid value %s for argument -p", args[i+1])
-				return
+				exitf("invalid value %s for argument -p", args[i+1])
 			}
 		}
 	}
@@ -65,7 +68,7 @@ func main() {
 			parse(scanner.Text())
 		}
 		if scanner.Err() != nil {
-			fmt.Printf("error reading stdin: %s", scanner.Err())
+			exitf("error reading stdin: %s", scanner.Err())
 		}
 	}
 }
