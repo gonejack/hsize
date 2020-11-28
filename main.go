@@ -27,8 +27,6 @@ Arguments:
   -p          Precision
 `
 
-
-
 func main() {
 	args := os.Args[1:]
 
