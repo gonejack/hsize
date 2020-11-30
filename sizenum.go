@@ -16,7 +16,7 @@ func (n *SizeNum) From(str string) (*SizeNum, error) {
 	if n.ints == nil {
 		n.ints = make([]int8, 0, len(str)+2)
 	} else {
-		n.ints = n.ints[0:0]
+		n.ints = n.ints[:0]
 	}
 	n.decs = make([]int8, prec, prec)
 
@@ -36,14 +36,14 @@ func (n *SizeNum) From(str string) (*SizeNum, error) {
 	return n, nil
 }
 
-func (n *SizeNum) Cmp(s *SizeNum) (result int) {
+func (n *SizeNum) Cmp(s *SizeNum) (r int) {
 	var d int8
 	defer func() {
 		if d >= 1 {
-			result = 1
+			r = 1
 		}
 		if d <= -1 {
-			result = -1
+			r = -1
 		}
 	}()
 
@@ -117,19 +117,17 @@ func (n *SizeNum) Div2() {
 }
 func (n *SizeNum) String() string {
 	rs := make([]rune, 0, len(n.ints)+prec+1)
-	ints, decs := n.integers(), n.decimals()
 
-	if len(ints) == 0 {
-		ints = append(ints, '0')
-	} else {
-		for _, v := range ints {
-			rs = append(rs, rune('0'+v))
+	for _, v := range n.integers() {
+		rs = append(rs, rune('0'+v))
+	}
+	if len(rs) == 0 {
+		rs = append(rs, '0')
+	}
+	for i, v := range n.decimals() {
+		if i == 0 {
+			rs = append(rs, '.')
 		}
-	}
-	if len(decs) > 0 {
-		rs = append(rs, '.')
-	}
-	for _, v := range decs {
 		rs = append(rs, rune('0'+v))
 	}
 	return string(rs)
@@ -145,7 +143,7 @@ func (n *SizeNum) integers() (ints []int8) {
 }
 func (n *SizeNum) decimals() (decs []int8) {
 	for i := prec; i > 0; i-- {
-		if n.decs[i-1] > 0 {
+		if n.decs[i-1] != 0 {
 			return n.decs[:i]
 		}
 	}
