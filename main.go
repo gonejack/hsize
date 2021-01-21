@@ -25,6 +25,7 @@ print:
 Arguments:
   -h,--help      Print this help
   -p,--precision Precision
+  -5             Give me five
 `
 
 func main() {
@@ -33,6 +34,10 @@ func main() {
 	for _, arg := range args {
 		if arg == "-h" || arg == "--help" {
 			fmt.Print(strings.ReplaceAll(help, "{exec}", filepath.Base(os.Args[0])))
+			return
+		}
+		if arg == "-5" {
+			fmt.Print("ヘ( ^o^)ノ＼(^_^ )")
 			return
 		}
 	}
