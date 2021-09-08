@@ -3,87 +3,49 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/alecthomas/kong"
 	"os"
-	"path/filepath"
-	"strconv"
 	"strings"
 )
 
-const help = `Examples:
-command:
-  {exec} 123 383764 text
-print:
-  123B
-  374.76KB
-  NaN(text)
-
-command: 
-  echo 123 | {exec}
-print:
-  123B
-
-Arguments:
-  -h,--help      Print this help
-  -p,--precision Precision
-  -5             Give me five
-`
-
-func main() {
-	args := os.Args[1:]
-
-	for _, arg := range args {
-		if arg == "-h" || arg == "--help" {
-			fmt.Print(strings.ReplaceAll(help, "{exec}", filepath.Base(os.Args[0])))
-			return
-		}
-		if arg == "-5" {
-			fmt.Print("ヘ( ^o^)ノ＼(^_^ )")
-			return
-		}
+type cmd struct {
+	opts struct {
+		Args      []string `arg:"" optional:""`
+		Precision uint     `short:"p" default:"2" help:"Precision."`
+		Five      bool     `short:"5" help:"Give me five."`
 	}
+}
 
-	for i, arg := range args {
-		if arg == "-p" || arg == "--precision" {
-			if i+1 >= len(args) {
-				exitf("missing value for argument -p")
-			}
+func (c *cmd) run() {
+	kong.Parse(&c.opts,
+		kong.Name("hsize"),
+		kong.Description("hsize 123 383764 <OR> echo 19129219219129119 | hsize"),
+		kong.UsageOnError(),
+	)
 
-			var err error
-			prec, err = strconv.Atoi(args[i+1])
-			if prec < 0 || err != nil {
-				exitf("invalid value %s for argument -p", args[i+1])
-			}
-
-			args = args[i+2:]
-			break
-		}
+	if c.opts.Five {
+		fmt.Print("ヘ( ^o^)ノ＼(^_^ )")
+		return
 	}
-
-	if len(args) > 0 {
-		for _, arg := range args {
-			parse(arg)
+	if c.opts.Precision > 0 {
+		prec = int(c.opts.Precision)
+	}
+	if len(c.opts.Args) > 0 {
+		for _, arg := range c.opts.Args {
+			c.parse(arg)
 		}
 	} else {
 		scanner := bufio.NewScanner(os.Stdin)
 		for scanner.Scan() {
-			parse(scanner.Text())
+			c.parse(scanner.Text())
 		}
 		if scanner.Err() != nil {
 			exitf("error reading stdin: %s", scanner.Err())
 		}
 	}
 }
-
-func exitf(format string, a ...interface{}) {
-	fmt.Fprintln(os.Stderr, fmt.Sprintf(format, a...))
-	os.Exit(-2)
-}
-
-var units = [...]string{"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"}
-
-func parse(raw string) {
-	scale, _ := new(SizeNum).From("1024")
-	size, err := new(SizeNum).From(strings.TrimSpace(raw))
+func (c *cmd) parse(raw string) {
+	size, err := NewSizeNum().From(strings.TrimSpace(raw))
 	if err != nil {
 		fmt.Printf("NaN(%s)\n", raw)
 		return
@@ -99,4 +61,13 @@ func parse(raw string) {
 	}
 
 	fmt.Printf("%s%s\n", size, label)
+}
+
+func exitf(format string, a ...interface{}) {
+	fmt.Fprintln(os.Stderr, fmt.Sprintf(format, a...))
+	os.Exit(-2)
+}
+
+func main() {
+	new(cmd).run()
 }

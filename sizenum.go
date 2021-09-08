@@ -1,11 +1,11 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
-var prec = 2
 var NaN = fmt.Errorf("NaN")
+var units = [...]string{"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"}
+var scale, _ = NewSizeNum().From("1024")
+var prec = 2
 
 type SizeNum struct {
 	ints []int8
@@ -35,7 +35,6 @@ func (n *SizeNum) From(str string) (*SizeNum, error) {
 
 	return n, nil
 }
-
 func (n *SizeNum) Cmp(s *SizeNum) (r int) {
 	var d int8
 	defer func() {
@@ -90,7 +89,6 @@ func (n *SizeNum) Gte(s *SizeNum) bool {
 func (n *SizeNum) Eq(s *SizeNum) bool {
 	return n.Cmp(s) == 0
 }
-
 func (n *SizeNum) Div1024() {
 	for i := 1; i <= 10; i++ {
 		n.Div2()
@@ -148,4 +146,8 @@ func (n *SizeNum) decimals() (decs []int8) {
 		}
 	}
 	return
+}
+
+func NewSizeNum() *SizeNum {
+	return new(SizeNum)
 }
