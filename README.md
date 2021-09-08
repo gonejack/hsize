@@ -21,7 +21,7 @@ by stdin
 16.99PB
 ```
 
-## Arguments
+## Options
 
 #### -p precision
 ```
