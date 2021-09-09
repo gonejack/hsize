@@ -1,5 +1,10 @@
-# hsize [![GitHub license](https://img.shields.io/github/license/gonejack/hsize.svg?color=blue)](LICENSE)
+# hsize
 command line tool for human readable size
+
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/gonejack/hsize)
+![Build](https://github.com/gonejack/hsize/actions/workflows/go.yml/badge.svg)
+[![GitHub license](https://img.shields.io/github/license/gonejack/hsize.svg?color=blue)](LICENSE)
+
 
 ## Installation
 ```
