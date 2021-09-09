@@ -5,7 +5,6 @@ command line tool for human readable size
 ![Build](https://github.com/gonejack/hsize/actions/workflows/go.yml/badge.svg)
 [![GitHub license](https://img.shields.io/github/license/gonejack/hsize.svg?color=blue)](LICENSE)
 
-
 ## Installation
 ```
 go get -u github.com/gonejack/hsize
