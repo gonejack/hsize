@@ -1,5 +1,5 @@
 # hsize
-command line tool for human readable size
+Command line tool for human readable size
 
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/gonejack/hsize)
 ![Build](https://github.com/gonejack/hsize/actions/workflows/go.yml/badge.svg)
@@ -7,7 +7,7 @@ command line tool for human readable size
 
 ## Installation
 ```
-go get -u github.com/gonejack/hsize
+go install github.com/gonejack/hsize@latest
 ```
 
 ## Usage

@@ -13,6 +13,7 @@ type cmd struct {
 		Args      []string `arg:"" optional:""`
 		Precision uint     `short:"p" default:"2" help:"Precision."`
 		Five      bool     `short:"5" help:"Give me five."`
+		About     bool     `help:"About"`
 	}
 }
 
@@ -22,9 +23,12 @@ func (c *cmd) run() {
 		kong.Description("hsize 123 383764 <OR> echo 19129219219129119 | hsize"),
 		kong.UsageOnError(),
 	)
-
 	if c.opts.Five {
 		fmt.Print("ヘ( ^o^)ノ＼(^_^ )")
+		return
+	}
+	if c.opts.About {
+		fmt.Println("Visit https://github.com/gonejack/hsize")
 		return
 	}
 	if c.opts.Precision > 0 {
@@ -67,7 +71,6 @@ func exitf(format string, a ...interface{}) {
 	fmt.Fprintln(os.Stderr, fmt.Sprintf(format, a...))
 	os.Exit(-2)
 }
-
 func main() {
 	new(cmd).run()
 }

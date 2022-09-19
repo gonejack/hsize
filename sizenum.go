@@ -8,8 +8,8 @@ var scale, _ = NewSizeNum().From("1024")
 var prec = 2
 
 type SizeNum struct {
-	ints []int8
-	decs []int8
+	ints []int8 // integers
+	decs []int8 // decimals
 }
 
 func (n *SizeNum) From(str string) (*SizeNum, error) {
@@ -19,11 +19,9 @@ func (n *SizeNum) From(str string) (*SizeNum, error) {
 		n.ints = n.ints[:0]
 	}
 	n.decs = make([]int8, prec, prec)
-
 	if len(str) == 0 {
 		return nil, NaN
 	}
-
 	for _, r := range str {
 		v := r - '0'
 		if v < 0 || v > 9 {
@@ -32,7 +30,6 @@ func (n *SizeNum) From(str string) (*SizeNum, error) {
 			n.ints = append(n.ints, int8(v))
 		}
 	}
-
 	return n, nil
 }
 func (n *SizeNum) Cmp(s *SizeNum) (r int) {
@@ -114,21 +111,20 @@ func (n *SizeNum) Div2() {
 	}
 }
 func (n *SizeNum) String() string {
-	rs := make([]rune, 0, len(n.ints)+prec+1)
-
+	arr := make([]rune, 0, len(n.ints)+prec+1)
 	for _, v := range n.integers() {
-		rs = append(rs, rune('0'+v))
+		arr = append(arr, rune('0'+v))
 	}
-	if len(rs) == 0 {
-		rs = append(rs, '0')
+	if len(arr) == 0 {
+		arr = append(arr, '0')
 	}
 	for i, v := range n.decimals() {
 		if i == 0 {
-			rs = append(rs, '.')
+			arr = append(arr, '.')
 		}
-		rs = append(rs, rune('0'+v))
+		arr = append(arr, rune('0'+v))
 	}
-	return string(rs)
+	return string(arr)
 }
 
 func (n *SizeNum) integers() (ints []int8) {
