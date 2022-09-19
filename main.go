@@ -3,9 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/alecthomas/kong"
 	"os"
 	"strings"
+
+	"github.com/alecthomas/kong"
 )
 
 type cmd struct {
