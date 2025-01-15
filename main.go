@@ -14,7 +14,7 @@ type cmd struct {
 		Args      []string `arg:"" optional:""`
 		Precision uint     `short:"p" default:"2" help:"Precision."`
 		Five      bool     `short:"5" help:"Give me five."`
-		About     bool     `help:"About"`
+		About     bool     `help:"About."`
 	}
 }
 
@@ -33,7 +33,7 @@ func (c *cmd) run() {
 		return
 	}
 	if c.opts.Precision > 0 {
-		prec = int(c.opts.Precision)
+		precisions = int(c.opts.Precision)
 	}
 	if len(c.opts.Args) > 0 {
 		for _, arg := range c.opts.Args {
@@ -58,7 +58,7 @@ func (c *cmd) parse(raw string) {
 
 	var label string
 	for _, label = range units {
-		if size.Gte(scale) {
+		if size.Gte(base1K) {
 			size.Div1024()
 		} else {
 			break

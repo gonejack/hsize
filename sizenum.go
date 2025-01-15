@@ -4,21 +4,21 @@ import "fmt"
 
 var NaN = fmt.Errorf("NaN")
 var units = [...]string{"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"}
-var scale, _ = NewSizeNum().From("1024")
-var prec = 2
+var base1K, _ = NewSizeNum().From("1024")
+var precisions = 2
 
-type SizeNum struct {
-	ints []int8 // integers
-	decs []int8 // decimals
+type SizeN struct {
+	is []int8 // integers
+	ds []int8 // decimals
 }
 
-func (n *SizeNum) From(str string) (*SizeNum, error) {
-	if n.ints == nil {
-		n.ints = make([]int8, 0, len(str)+2)
+func (n *SizeN) From(str string) (*SizeN, error) {
+	if n.is == nil {
+		n.is = make([]int8, 0, len(str)+2)
 	} else {
-		n.ints = n.ints[:0]
+		n.is = n.is[:0]
 	}
-	n.decs = make([]int8, prec, prec)
+	n.ds = make([]int8, precisions)
 	if len(str) == 0 {
 		return nil, NaN
 	}
@@ -27,12 +27,12 @@ func (n *SizeNum) From(str string) (*SizeNum, error) {
 		if v < 0 || v > 9 {
 			return nil, NaN
 		} else {
-			n.ints = append(n.ints, int8(v))
+			n.is = append(n.is, int8(v))
 		}
 	}
 	return n, nil
 }
-func (n *SizeNum) Cmp(s *SizeNum) (r int) {
+func (n *SizeN) Cmp(s *SizeN) (r int) {
 	var d int8
 	defer func() {
 		if d >= 1 {
@@ -44,17 +44,17 @@ func (n *SizeNum) Cmp(s *SizeNum) (r int) {
 	}()
 
 	// integer comparison
-	nints, sints := n.integers(), s.integers()
+	nis, sis := n.integers(), s.integers()
 	switch {
-	case len(nints) > len(sints):
+	case len(nis) > len(sis):
 		d = 1
 		return
-	case len(nints) < len(sints):
+	case len(nis) < len(sis):
 		d = -1
 		return
 	default:
-		for i := range nints {
-			d = nints[i] - sints[i]
+		for i := range nis {
+			d = nis[i] - sis[i]
 			if d != 0 {
 				return
 			}
@@ -62,8 +62,8 @@ func (n *SizeNum) Cmp(s *SizeNum) (r int) {
 	}
 
 	// decimal comparison
-	for i := 0; i < prec; i++ {
-		d = n.decs[i] - s.decs[i]
+	for i := 0; i < precisions; i++ {
+		d = n.ds[i] - s.ds[i]
 		if d != 0 {
 			return
 		}
@@ -71,47 +71,47 @@ func (n *SizeNum) Cmp(s *SizeNum) (r int) {
 
 	return
 }
-func (n *SizeNum) Lt(s *SizeNum) bool {
+func (n *SizeN) Lt(s *SizeN) bool {
 	return n.Cmp(s) < 0
 }
-func (n *SizeNum) Lte(s *SizeNum) bool {
+func (n *SizeN) Lte(s *SizeN) bool {
 	return n.Cmp(s) <= 0
 }
-func (n *SizeNum) Gt(s *SizeNum) bool {
+func (n *SizeN) Gt(s *SizeN) bool {
 	return n.Cmp(s) > 0
 }
-func (n *SizeNum) Gte(s *SizeNum) bool {
+func (n *SizeN) Gte(s *SizeN) bool {
 	return n.Cmp(s) >= 0
 }
-func (n *SizeNum) Eq(s *SizeNum) bool {
+func (n *SizeN) Eq(s *SizeN) bool {
 	return n.Cmp(s) == 0
 }
-func (n *SizeNum) Div1024() {
+func (n *SizeN) Div1024() {
 	for i := 1; i <= 10; i++ {
 		n.Div2()
 	}
 }
-func (n *SizeNum) Div2() {
+func (n *SizeN) Div2() {
 	h := false
-	for i, v := range n.ints {
+	for i, v := range n.is {
 		if h {
 			v += 10
 		}
 		if v > 0 {
-			n.ints[i], h = v>>1, v&1 != 0
+			n.is[i], h = v>>1, v&1 != 0
 		}
 	}
-	for i, v := range n.decs {
+	for i, v := range n.ds {
 		if h {
 			v += 10
 		}
 		if v > 0 {
-			n.decs[i], h = v>>1, v&1 != 0
+			n.ds[i], h = v>>1, v&1 != 0
 		}
 	}
 }
-func (n *SizeNum) String() string {
-	arr := make([]rune, 0, len(n.ints)+prec+1)
+func (n *SizeN) String() string {
+	arr := make([]rune, 0, len(n.is)+precisions+1)
 	for _, v := range n.integers() {
 		arr = append(arr, rune('0'+v))
 	}
@@ -127,23 +127,23 @@ func (n *SizeNum) String() string {
 	return string(arr)
 }
 
-func (n *SizeNum) integers() (ints []int8) {
-	for i, v := range n.ints {
+func (n *SizeN) integers() (is []int8) {
+	for i, v := range n.is {
 		if v != 0 {
-			return n.ints[i:]
+			return n.is[i:]
 		}
 	}
 	return
 }
-func (n *SizeNum) decimals() (decs []int8) {
-	for i := prec; i > 0; i-- {
-		if n.decs[i-1] != 0 {
-			return n.decs[:i]
+func (n *SizeN) decimals() (ds []int8) {
+	for i := precisions; i > 0; i-- {
+		if n.ds[i-1] != 0 {
+			return n.ds[:i]
 		}
 	}
 	return
 }
 
-func NewSizeNum() *SizeNum {
-	return new(SizeNum)
+func NewSizeNum() *SizeN {
+	return new(SizeN)
 }
